@@ -59,7 +59,7 @@
               </div>
               <div class="row">
                 <div class="col my-3">
-                  <form action="<?= base_url('neraca_saldo/detail') ?>" method="post" class="d-flex flex-row justify-content-center">
+                  <form action="<?= base_url('laba_rugi/detail') ?>" method="post" class="d-flex flex-row justify-content-center">
                       <div class="form-group">
                         <select name="bulan" id="bulan" class="form-control">
                           <?php

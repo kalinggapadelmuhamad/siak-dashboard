@@ -26,6 +26,8 @@ class User extends CI_Controller{
 			$titleTag = 'Dashboard';
 			$content = 'user/dashboard_new';
 			$dataAkun = $this->akun->getAkun();
+			// var_dump($dataAkun);
+			// die;
 			$dataAkunTransaksi = $this->jurnal->getAkunInJurnal();
 			
 			foreach($dataAkunTransaksi as $row){
@@ -33,13 +35,13 @@ class User extends CI_Controller{
 				$saldo[] = (array) $this->jurnal->getJurnalByNoReffSaldo($row->no_reff);
 			}
 
-			
+			$listJurnal = $this->jurnal->getJurnalByYearAndMonth();
 			$jumlah = count($data);
 	
 			$jurnals = $this->jurnal->getJurnalJoinAkun();
 			$totalDebit = $this->jurnal->getTotalSaldo('debit');
 			$totalKredit = $this->jurnal->getTotalSaldo('kredit');
-			$this->load->view('template',compact('content','dataAkun','titleTag','jurnals','totalDebit','totalKredit','jumlah','data','saldo','dataAkunTransaksi'));
+			$this->load->view('template',compact('content','dataAkun','titleTag','jurnals','totalDebit','totalKredit','jumlah','data','saldo','dataAkunTransaksi','listJurnal'));
 		}
     }
 
@@ -445,8 +447,6 @@ class User extends CI_Controller{
         $listJurnal = $this->jurnal->getJurnalByYearAndMonth();
 		
         $tahun = $this->jurnal->getJurnalByYear();
-		// var_dump($listJurnal);
-		// die;
         $this->load->view('template',compact('content','listJurnal','titleTag','tahun'));
     }
 
@@ -471,8 +471,8 @@ class User extends CI_Controller{
         }
 
         if($data == null || $saldo == null){
-            $this->session->set_flashdata('dataNull','Neraca Saldo Dengan Bulan '.bulan($bulan).' Pada Tahun '.date('Y',strtotime($tahun)).' Tidak Di Temukan');
-            redirect('neraca_saldo');
+            $this->session->set_flashdata('dataNull','Laba Rugi Dengan Bulan '.bulan($bulan).' Pada Tahun '.date('Y',strtotime($tahun)).' Tidak Di Temukan');
+            redirect('laba_rugi');
         }
 
         $jumlah = count($data);
