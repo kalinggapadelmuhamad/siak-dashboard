@@ -86,16 +86,21 @@
 																		
 																		for($j=0;$j<count($data[$i]);$j++):
 																				if($deb[$j]->jenis_saldo=="debit"){
+																					if(substr($data[$i][$s]->no_reff, 0, 1) === '5'){
 																						$debit = $debit + $deb[$j]->saldo;
+																					}
 																				}else{
+																					if(substr($data[$i][$s]->no_reff, 0, 1) === '4'){
 																						$kredit = $kredit + $deb[$j]->saldo;
+																					}
 																				}
 																				$hasil = $debit-$kredit;
 																			endfor;
 
 																		if($hasil>=0){ 
 
-																		}else{ ?>
+																		}else{ 
+																			if(substr($data[$i][$s]->no_reff, 0, 1) === '4'){ ?>
 																			<tr>
 																				<td>
 																						<?= $data[$i][$s]->no_reff ?>
@@ -109,6 +114,7 @@
 																				<?php $totalKredit += $hasil; ?>
 														<?php 
 																		} 
+																	}
 																		$debit = 0;
 																		$kredit = 0;
 																endfor;
@@ -141,14 +147,19 @@
 																		
 																		for($j=0;$j<count($data[$i]);$j++):
 																				if($deb[$j]->jenis_saldo=="debit"){
+																					if(substr($data[$i][$s]->no_reff, 0, 1) === '5'){
 																						$debit = $debit + $deb[$j]->saldo;
+																					}
 																				}else{
+																					if(substr($data[$i][$s]->no_reff, 0, 1) === '4'){
 																						$kredit = $kredit + $deb[$j]->saldo;
+																					}
 																				}
 																				$hasil = $debit-$kredit;
 																		endfor;
 
-																		if($hasil>=0){ ?>
+																		if($hasil>=0){ 
+																			if(substr($data[$i][$s]->no_reff, 0, 1) === '5'){ ?>
 																			<tr>
 																				<td>
 																						<?= $data[$i][$s]->no_reff ?>
@@ -162,6 +173,7 @@
 																		<?php $totalDebit += $hasil; ?>
 																		<?php 
 																		} 
+																	}
 																		$debit = 0;
 																		$kredit = 0;
 																endfor;
@@ -172,16 +184,16 @@
 														</tr>
 														<?php 
                             if($totalDebit != abs($totalKredit)){ ?>
-                            <tr class="bg-danger">
-																<td colspan="2" class="text-white" style="font-weight:bolder;font-size:19px">Laba/Rugi</td>
+                            <tr class="bg-light">
+																<td colspan="2" class="text-black" style="font-weight:bolder;font-size:19px">Laba/Rugi</td>
 																<td></td>
-																<td class="text-white" style="font-weight:bolder;font-size:19px"><?= 'Rp. ' . number_format(abs($totalKredit) - $totalDebit, 0, ',', '.') ?></td>
+																<td class="text-black" style="font-weight:bolder;font-size:19px"><?= 'Rp. ' . number_format(abs($totalKredit) - $totalDebit, 0, ',', '.') ?></td>
 														</tr>
                             <?php }else {?>
 														<tr class="bg-success">
-																<td colspan="2" class="text-white" style="font-weight:bolder;font-size:19px">Laba/Rugi</td>
+																<td colspan="2" class="text-black" style="font-weight:bolder;font-size:19px">Laba/Rugi</td>
 																<td></td>
-																<td class="text-white" style="font-weight:bolder;font-size:19px"><?= 'Rp. ' . number_format(abs($totalKredit) - $totalDebit, 0, ',', '.') ?></td>
+																<td class="text-black" style="font-weight:bolder;font-size:19px"><?= 'Rp. ' . number_format(abs($totalKredit) - $totalDebit, 0, ',', '.') ?></td>
 														</tr>
                             <?php } ?>
 												</tbody>

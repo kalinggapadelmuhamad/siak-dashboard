@@ -167,9 +167,13 @@
                     
                             for($j=0;$j<count($data[$i]);$j++):
                                 if($deb[$j]->jenis_saldo=="debit"){
-                                    $debit = $debit + $deb[$j]->saldo;
+																	if(substr($data[$i][$s]->no_reff, 0, 1) === '5'){
+																		$debit = $debit + $deb[$j]->saldo;
+																	}
                                 }else{
-                                    $kredit = $kredit + $deb[$j]->saldo;
+																	if(substr($data[$i][$s]->no_reff, 0, 1) === '4'){
+																		$kredit = $kredit + $deb[$j]->saldo;
+																	}
                                 }
                                 $hasil = $debit-$kredit;
 															endfor;
@@ -214,8 +218,253 @@
     </div>
     <div class="container-fluid mt--7">
       <div class="row mb-4">
-        <div class="col-xl-6 mb-5 mb-xl-0">
+			<div class="col-xl-6 mb-5 mb-xl-0">
+					<div class="card shadow">
+          	<div class="card-header border-0">
+              <div class="row align-items-center">
+                  <div class="col">
+										<h3 class="mb-0">Laba Rugi</h3>
+                  </div>
+              </div>
+            </div>
+						<div class="table-responsive">
+					<?php 
+													$a=0;
+													$debit = 0;
+													$kredit = 0;
+											?>
+											<table class="table align-items-center table-flush">
+												<thead class="">
+													<td class="" colspan="4"><b>Pendapatan</b></td>
+												</thead>
+												<thead class="thead-light">
+													<tr>
+														<th scope="col">No. Akun</th>
+														<th scope="col">Nama Akun</th>
+														<th scope="col">Debit</th>
+														<th scope="col">Kredit</th>
+													</tr>
+												</thead>
+												<tbody>
+														<?php
+																$totalKredit=0;
+																for($i=0;$i<$jumlah;$i++) :                          
+																		$a++;
+																		$s=0;
+																		$deb = $saldo[$i];
+																		
+																		for($j=0;$j<count($data[$i]);$j++):
+																				if($deb[$j]->jenis_saldo=="debit"){
+																					if(substr($data[$i][$s]->no_reff, 0, 1) === '5'){
+																						$debit = $debit + $deb[$j]->saldo;
+																					}
+																				}else{
+																						if(substr($data[$i][$s]->no_reff, 0, 1) === '4'){
+																							$kredit = $kredit + $deb[$j]->saldo;
+																						}
+																				}
+																				$hasil = $debit-$kredit;
+																			endfor;
+
+																		if($hasil>=0){ 
+
+																		}else{ 
+																			if(substr($data[$i][$s]->no_reff, 0, 1) === '4'){ ?>
+																			<tr>
+																				<td>
+																						<?= $data[$i][$s]->no_reff ?>
+																				</td>
+																				<td>
+																						<?= $data[$i][$s]->nama_reff ?>
+																				</td>
+																				<td> - </td>
+																				<td><?= 'Rp. '.number_format(abs($hasil),0,',','.') ?></td>
+																			</tr>
+																				<?php $totalKredit += $hasil; ?>
+														<?php 
+																		} 
+																	}
+																		$debit = 0;
+																		$kredit = 0;
+																endfor;
+															?>
+														<tr class="bg-light">
+															<td class="" colspan="3"><b>Total Pendapatan</b></td>
+															<td class=""><b><?= 'Rp. ' . number_format(abs($totalKredit), 0, ',', '.') ?></b></td>
+														</tr>
+												</tbody>
+											</table>
+											<table class="table align-items-center table-flush">
+												<thead class="">
+													<td class="" colspan="4"><b>Biaya</b></td>
+												</thead>
+												<thead class="thead-light">
+													<tr>
+														<th scope="col">No. Akun</th>
+														<th scope="col">Nama Akun</th>
+														<th scope="col">Debit</th>
+														<th scope="col">Kredit</th>
+													</tr>
+												</thead>
+												<tbody>
+														<?php
+																$totalDebit=0;
+																for($i=0;$i<$jumlah;$i++) :                          
+																		$a++;
+																		$s=0;
+																		$deb = $saldo[$i];
+																		
+																		for($j=0;$j<count($data[$i]);$j++):
+																				if($deb[$j]->jenis_saldo=="debit"){
+																					if(substr($data[$i][$s]->no_reff, 0, 1) === '5'){
+																						$debit = $debit + $deb[$j]->saldo;
+																					}
+																				}else{
+																					if(substr($data[$i][$s]->no_reff, 0, 1) === '4'){
+																						$kredit = $kredit + $deb[$j]->saldo;
+																					}
+																				}
+																				$hasil = $debit-$kredit;
+																		endfor;
+
+																		if($hasil>=0){ 
+																			if(substr($data[$i][$s]->no_reff, 0, 1) === '5'){ ?>
+																			<tr>
+																				<td>
+																						<?= $data[$i][$s]->no_reff ?>
+																				</td>
+																				<td>
+																						<?= $data[$i][$s]->nama_reff ?>
+																				</td>
+																				<td><?= 'Rp. '.number_format($hasil,0,',','.') ?></td>
+																				<td> - </td>
+																			</tr>
+																		<?php $totalDebit += $hasil; ?>
+																		<?php 
+																			}
+																		}	
+																		$debit = 0;
+																		$kredit = 0;
+																endfor;
+															?>
+														<tr class="bg-light">
+															<td class="" colspan="3"><b>Total Biaya</b></td>
+															<td class=""><b><?= 'Rp. ' . number_format(abs($totalDebit), 0, ',', '.') ?></b></td>
+														</tr>
+														<?php 
+                            if($totalDebit != abs($totalKredit)){ ?>
+                            <tr class="bg-light">
+																<td colspan="2" class="text-black" style="font-weight:bolder;font-size:19px">Laba/Rugi</td>
+																<td></td>
+																<td class="text-black" style="font-weight:bolder;font-size:19px"><?= 'Rp. ' . number_format(abs($totalKredit) - $totalDebit, 0, ',', '.') ?></td>
+														</tr>
+                            <?php }else {?>
+														<tr class="bg-light">
+																<td colspan="2" class="text-black" style="font-weight:bolder;font-size:19px">Laba/Rugi</td>
+																<td></td>
+																<td class="text-black" style="font-weight:bolder;font-size:19px"><?= 'Rp. ' . number_format(abs($totalKredit) - $totalDebit, 0, ',', '.') ?></td>
+														</tr>
+                            <?php } ?>
+												</tbody>
+											</table>
+										</div>
+					</div>
+        </div>
+        <div class="col-xl-6">
 				<div class="card shadow">
+					<div class="card-header border-0">
+            <div class="row align-items-center">
+              <div class="col">
+                <h3 class="mb-0">Neraca Saldo</h3>
+              </div>
+            </div>
+          </div>
+					<div class="table-responsive">
+            <?php 
+                $a=0;
+                $debit = 0;
+                $kredit = 0;
+            ?>
+              <!-- Projects table -->
+              <table class="table align-items-center table-flush">
+                <thead class="thead-light">
+                  <tr>
+                    <th scope="col">No. Akun</th>
+                    <th scope="col">Nama Akun</th>
+                    <th scope="col">Debit</th>
+                    <th scope="col">Kredit</th>
+                  </tr>
+                </thead>
+                <tbody>
+                    <?php
+                        $totalDebit=0;
+                        $totalKredit=0;
+                        for($i=0;$i<$jumlah;$i++) :                          
+                            $a++;
+                            $s=0;
+                            $deb = $saldo[$i];
+                    ?>
+                    <tr>
+                        <td>
+                            <?= $data[$i][$s]->no_reff ?>
+                        </td>
+                        <td>
+                            <?= $data[$i][$s]->nama_reff ?>
+                        </td>
+                        <?php 
+                            for($j=0;$j<count($data[$i]);$j++):
+                                if($deb[$j]->jenis_saldo=="debit"){
+                                    $debit = $debit + $deb[$j]->saldo;
+                                }else{
+                                    $kredit = $kredit + $deb[$j]->saldo;
+                                }
+                                $hasil = $debit-$kredit;
+                            endfor 
+                        ?>
+                        <?php 
+                            if($hasil>=0){ ?>
+                                <td><?= 'Rp. '.number_format($hasil,0,',','.') ?></td>
+                                <td> - </td>
+                            <?php $totalDebit += $hasil; ?>
+                        <?php }else{ ?>
+                                <td> - </td>
+                                <td><?= 'Rp. '.number_format(abs($hasil),0,',','.') ?></td>
+                                <?php $totalKredit += $hasil; ?>
+                        <?php } ?>
+                        <?php
+                            $debit = 0;
+                            $kredit = 0;
+                        ?>
+                    </tr>
+                    <?php endfor ?>
+                    <?php if($totalDebit != abs($totalKredit)){ ?>
+                    <tr>
+                        <td class="text-center" colspan="2"><b>Total</b></td>
+                        <td class="text-danger"><?= 'Rp. '.number_format($totalDebit,0,',','.') ?></td>
+                        <td class="text-danger"><?= 'Rp. '.number_format(abs($totalKredit),0,',','.') ?></td>
+                    </tr>
+                    <tr class="bg-danger text-center">
+                        <td colspan="6" class="text-white" style="font-weight:bolder;font-size:19px">TIDAK SEIMBANG</td>
+                    </tr>
+                    <?php }else{ ?>
+                      <tr>
+                        <td class="text-center" colspan="2"><b>Total</b></td>
+                        <td class="text-success"><?= 'Rp. '.number_format($totalDebit,0,',','.') ?></td>
+                        <td class="text-success"><?= 'Rp. '.number_format(abs($totalKredit),0,',','.') ?></td>
+                    </tr>
+                    <tr class="bg-success text-center">
+                        <td colspan="6" class="text-white" style="font-weight:bolder;font-size:19px">SEIMBANG</td>
+                    </tr>
+                    <?php } ?>  
+                </tbody>
+              </table>
+            </div>
+				</div>
+        </div>
+      </div>
+			<div class="row">
+			<div class="col-xl-12 mb-5 mb-xl-0">
+			<div class="card shadow">
 						<div class="card-header border-0">
               <div class="row align-items-center">
                 <div class="col">
@@ -339,239 +588,6 @@
                     </div>												
 						</div>
 				</div>
-        </div>
-        <div class="col-xl-6">
-				<div class="card shadow">
-					<div class="card-header border-0">
-            <div class="row align-items-center">
-              <div class="col">
-                <h3 class="mb-0">Neraca Saldo</h3>
-              </div>
-            </div>
-          </div>
-					<div class="table-responsive">
-            <?php 
-                $a=0;
-                $debit = 0;
-                $kredit = 0;
-            ?>
-              <!-- Projects table -->
-              <table class="table align-items-center table-flush">
-                <thead class="thead-light">
-                  <tr>
-                    <th scope="col">No. Akun</th>
-                    <th scope="col">Nama Akun</th>
-                    <th scope="col">Debit</th>
-                    <th scope="col">Kredit</th>
-                  </tr>
-                </thead>
-                <tbody>
-                    <?php
-                        $totalDebit=0;
-                        $totalKredit=0;
-                        for($i=0;$i<$jumlah;$i++) :                          
-                            $a++;
-                            $s=0;
-                            $deb = $saldo[$i];
-                    ?>
-                    <tr>
-                        <td>
-                            <?= $data[$i][$s]->no_reff ?>
-                        </td>
-                        <td>
-                            <?= $data[$i][$s]->nama_reff ?>
-                        </td>
-                        <?php 
-                            for($j=0;$j<count($data[$i]);$j++):
-                                if($deb[$j]->jenis_saldo=="debit"){
-                                    $debit = $debit + $deb[$j]->saldo;
-                                }else{
-                                    $kredit = $kredit + $deb[$j]->saldo;
-                                }
-                                $hasil = $debit-$kredit;
-                            endfor 
-                        ?>
-                        <?php 
-                            if($hasil>=0){ ?>
-                                <td><?= 'Rp. '.number_format($hasil,0,',','.') ?></td>
-                                <td> - </td>
-                            <?php $totalDebit += $hasil; ?>
-                        <?php }else{ ?>
-                                <td> - </td>
-                                <td><?= 'Rp. '.number_format(abs($hasil),0,',','.') ?></td>
-                                <?php $totalKredit += $hasil; ?>
-                        <?php } ?>
-                        <?php
-                            $debit = 0;
-                            $kredit = 0;
-                        ?>
-                    </tr>
-                    <?php endfor ?>
-                    <?php if($totalDebit != abs($totalKredit)){ ?>
-                    <tr>
-                        <td class="text-center" colspan="2"><b>Total</b></td>
-                        <td class="text-danger"><?= 'Rp. '.number_format($totalDebit,0,',','.') ?></td>
-                        <td class="text-danger"><?= 'Rp. '.number_format(abs($totalKredit),0,',','.') ?></td>
-                    </tr>
-                    <tr class="bg-danger text-center">
-                        <td colspan="6" class="text-white" style="font-weight:bolder;font-size:19px">TIDAK SEIMBANG</td>
-                    </tr>
-                    <?php }else{ ?>
-                      <tr>
-                        <td class="text-center" colspan="2"><b>Total</b></td>
-                        <td class="text-success"><?= 'Rp. '.number_format($totalDebit,0,',','.') ?></td>
-                        <td class="text-success"><?= 'Rp. '.number_format(abs($totalKredit),0,',','.') ?></td>
-                    </tr>
-                    <tr class="bg-success text-center">
-                        <td colspan="6" class="text-white" style="font-weight:bolder;font-size:19px">SEIMBANG</td>
-                    </tr>
-                    <?php } ?>  
-                </tbody>
-              </table>
-            </div>
-				</div>
-        </div>
-      </div>
-			<div class="row">
-        <div class="col-xl-12 mb-5 mb-xl-0">
-					<div class="card shadow">
-          	<div class="card-header border-0">
-              <div class="row align-items-center">
-                  <div class="col">
-										<h3 class="mb-0">Laba Rugi</h3>
-                  </div>
-              </div>
-            </div>
-						<div class="table-responsive">
-					<?php 
-													$a=0;
-													$debit = 0;
-													$kredit = 0;
-											?>
-											<table class="table align-items-center table-flush">
-												<thead class="">
-													<td class="" colspan="4"><b>Pendapatan</b></td>
-												</thead>
-												<thead class="thead-light">
-													<tr>
-														<th scope="col">No. Akun</th>
-														<th scope="col">Nama Akun</th>
-														<th scope="col">Debit</th>
-														<th scope="col">Kredit</th>
-													</tr>
-												</thead>
-												<tbody>
-														<?php
-																$totalKredit=0;
-																for($i=0;$i<$jumlah;$i++) :                          
-																		$a++;
-																		$s=0;
-																		$deb = $saldo[$i];
-																		
-																		for($j=0;$j<count($data[$i]);$j++):
-																				if($deb[$j]->jenis_saldo=="debit"){
-																						$debit = $debit + $deb[$j]->saldo;
-																				}else{
-																						$kredit = $kredit + $deb[$j]->saldo;
-																				}
-																				$hasil = $debit-$kredit;
-																			endfor;
-
-																		if($hasil>=0){ 
-
-																		}else{ ?>
-																			<tr>
-																				<td>
-																						<?= $data[$i][$s]->no_reff ?>
-																				</td>
-																				<td>
-																						<?= $data[$i][$s]->nama_reff ?>
-																				</td>
-																				<td> - </td>
-																				<td><?= 'Rp. '.number_format(abs($hasil),0,',','.') ?></td>
-																			</tr>
-																				<?php $totalKredit += $hasil; ?>
-														<?php 
-																		} 
-																		$debit = 0;
-																		$kredit = 0;
-																endfor;
-															?>
-														<tr class="bg-light">
-															<td class="" colspan="3"><b>Total Pendapatan</b></td>
-															<td class=""><b><?= 'Rp. ' . number_format(abs($totalKredit), 0, ',', '.') ?></b></td>
-														</tr>
-												</tbody>
-											</table>
-											<table class="table align-items-center table-flush">
-												<thead class="">
-													<td class="" colspan="4"><b>Biaya</b></td>
-												</thead>
-												<thead class="thead-light">
-													<tr>
-														<th scope="col">No. Akun</th>
-														<th scope="col">Nama Akun</th>
-														<th scope="col">Debit</th>
-														<th scope="col">Kredit</th>
-													</tr>
-												</thead>
-												<tbody>
-														<?php
-																$totalDebit=0;
-																for($i=0;$i<$jumlah;$i++) :                          
-																		$a++;
-																		$s=0;
-																		$deb = $saldo[$i];
-																		
-																		for($j=0;$j<count($data[$i]);$j++):
-																				if($deb[$j]->jenis_saldo=="debit"){
-																						$debit = $debit + $deb[$j]->saldo;
-																				}else{
-																						$kredit = $kredit + $deb[$j]->saldo;
-																				}
-																				$hasil = $debit-$kredit;
-																		endfor;
-
-																		if($hasil>=0){ ?>
-																			<tr>
-																				<td>
-																						<?= $data[$i][$s]->no_reff ?>
-																				</td>
-																				<td>
-																						<?= $data[$i][$s]->nama_reff ?>
-																				</td>
-																				<td><?= 'Rp. '.number_format($hasil,0,',','.') ?></td>
-																				<td> - </td>
-																			</tr>
-																		<?php $totalDebit += $hasil; ?>
-																		<?php 
-																		} 
-																		$debit = 0;
-																		$kredit = 0;
-																endfor;
-															?>
-														<tr class="bg-light">
-															<td class="" colspan="3"><b>Total Biaya</b></td>
-															<td class=""><b><?= 'Rp. ' . number_format(abs($totalDebit), 0, ',', '.') ?></b></td>
-														</tr>
-														<?php 
-                            if($totalDebit != abs($totalKredit)){ ?>
-                            <tr class="bg-light">
-																<td colspan="2" class="text-black" style="font-weight:bolder;font-size:19px">Laba/Rugi</td>
-																<td></td>
-																<td class="text-black" style="font-weight:bolder;font-size:19px"><?= 'Rp. ' . number_format(abs($totalKredit) - $totalDebit, 0, ',', '.') ?></td>
-														</tr>
-                            <?php }else {?>
-														<tr class="bg-light">
-																<td colspan="2" class="text-black" style="font-weight:bolder;font-size:19px">Laba/Rugi</td>
-																<td></td>
-																<td class="text-black" style="font-weight:bolder;font-size:19px"><?= 'Rp. ' . number_format(abs($totalKredit) - $totalDebit, 0, ',', '.') ?></td>
-														</tr>
-                            <?php } ?>
-												</tbody>
-											</table>
-										</div>
-					</div>
-        </div>
-      </div>
+			</div>
+			</div>
 
